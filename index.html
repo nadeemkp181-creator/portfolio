@@ -8,6 +8,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <style>
   :root{
     --bg:#0a0d13;
@@ -355,7 +356,7 @@
       <div class="terminal" aria-hidden="true">
         <div class="terminal-bar"><span></span><span></span><span></span><span class="label">ask_nadeem.ai</span></div>
         <div class="terminal-body">
-          <canvas id="netCanvas"></canvas>
+          <canvas id="hero3d"></canvas>
           <div class="terminal-text" id="terminalText"></div>
         </div>
       </div>
@@ -364,9 +365,9 @@
     <div class="trace reveal">
       <div class="trace-line"></div>
       <div class="trace-grid">
-        <div class="trace-stat"><b data-count="5" data-suffix="+">0</b><small>years experience</small></div>
+        <div class="trace-stat"><b data-count="5.5" data-suffix="+">0</b><small>years experience</small></div>
         <div class="trace-stat"><b data-count="4">0</b><small>companies</small></div>
-        <div class="trace-stat"><b data-count="8" data-suffix="+">0</b><small>AWS services used</small></div>
+        <div class="trace-stat"><b data-count="12" data-suffix="+">0</b><small>AWS services used</small></div>
         <div class="trace-stat"><b data-count="5">0</b><small>shipped platforms</small></div>
       </div>
     </div>
@@ -582,9 +583,12 @@
             <p class="proc-desc">Shutterfly's next-gen personalized photo-products platform, built with a 30+ person cross-functional team.</p>
             <ul class="proc-highlights">
               <li>Built reusable React.js &amp; Backbone.js UI components, improving component re-use by 40%.</li>
-              <li>Built RESTful APIs (Node.js/Express.js) with MongoDB schema design, deployed serverless on AWS Lambda with S3-hosted assets.</li>
+              <li>Designed MongoDB schemas and deployed serverless functions on AWS Lambda, with static assets hosted on S3.</li>
+              <li>Integrated a photo picker service enabling customers to upload photos directly from third-party image services.</li>
+              <li>Built a photo editor supporting filters, auto-enhance, crop, and rotate, plus drag-and-drop placement of photos onto the design canvas.</li>
+              <li>Implemented live product preview in the cart, reflecting photo edits in real time before checkout.</li>
             </ul>
-            <div class="tagrow"><span>React.js</span><span>Backbone.js</span><span>Node.js</span><span>MongoDB</span><span>AWS Lambda</span><span>API Gateway</span><span>SQS</span><span>SNS</span><span>S3</span></div>
+            <div class="tagrow"><span>React.js</span><span>Backbone.js</span><span>Node.js</span><span>MongoDB</span><span>AWS Lambda</span><span>API Gateway</span><span>SQS</span><span>SNS</span><span>S3</span><span>Canvas API</span></div>
           </div>
           <div class="proc-side">
             <a class="proj-link" href="https://www.shutterfly.com/" target="_blank" rel="noopener">shutterfly.com <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M7 17L17 7M17 7H8M17 7v9"/></svg></a>
@@ -600,8 +604,11 @@
             <ul class="proc-highlights">
               <li>Developed scalable serverless APIs on AWS Lambda for real-time booking and assistant assignment.</li>
               <li>Designed and optimized a MySQL schema for concurrent bookings, with real-time notifications on booking status.</li>
+              <li>Implemented authentication and authorization, and integrated Stripe for payments and subscription service management.</li>
+              <li>Built customer and assistant onboarding flows, along with an assistant dashboard featuring service-start timers.</li>
+              <li>Implemented a real-time chat service between customers and assistants, and built the admin dashboard.</li>
             </ul>
-            <div class="tagrow"><span>React.js</span><span>Node.js</span><span>AWS Lambda</span><span>MySQL</span><span>API Gateway</span><span>SQS</span><span>SNS</span><span>S3</span></div>
+            <div class="tagrow"><span>React.js</span><span>Node.js</span><span>AWS Lambda</span><span>MySQL</span><span>API Gateway</span><span>SQS</span><span>SNS</span><span>S3</span><span>Stripe</span><span>Auth</span><span>Real-time Chat</span></div>
           </div>
           <div class="proc-side">
             <a class="proj-link" href="https://www.tulabalanced.com/" target="_blank" rel="noopener">tulabalanced.com <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M7 17L17 7M17 7H8M17 7v9"/></svg></a>
@@ -660,7 +667,7 @@
         <div class="glow2" aria-hidden="true"></div>
         <div class="section-label">get in touch</div>
         <h2>Building something that needs a full stack &amp; GenAI engineer?</h2>
-        <p>Open to senior full stack and backend roles, especially where React, Node.js, AWS serverless, and applied LLM/RAG work meet real scale.</p>
+        <p>Open to senior full stack and backend roles, especially where React, Node.js, AWS serverless, and applied LLM/RAG work meet real scale. Based in Hyderabad, open to remote work.</p>
         <div class="contact-actions">
           <a class="btn-primary-lg" href="mailto:nadeemkp181@gmail.com">Send an email</a>
           <a class="btn-ghost" href="tel:+918379853291">Call +91 83798 53291</a>
@@ -850,8 +857,100 @@ function makeNetwork(canvas, opts){
   draw();
 }
 
-const termCanvas = document.getElementById('netCanvas');
-if(termCanvas) makeNetwork(termCanvas, {count:26, speed:0.18, linkDist:0.4, nodeColor:'#2dd4bf', lineColor:'45,212,191'});
+/* ---------- 3D hero animation (Three.js) ---------- */
+function initHero3D(canvas){
+  if(typeof THREE === 'undefined' || !canvas) return;
+
+  const parent = canvas.parentElement;
+  const renderer = new THREE.WebGLRenderer({ canvas, alpha:true, antialias:true });
+  const dpr = Math.min(window.devicePixelRatio || 1, 2);
+  renderer.setPixelRatio(dpr);
+
+  const scene = new THREE.Scene();
+  const camera = new THREE.PerspectiveCamera(45, 1, 0.1, 100);
+  camera.position.set(0, 0, 6.2);
+
+  function size(){
+    const rect = parent.getBoundingClientRect();
+    renderer.setSize(rect.width, rect.height, false);
+    camera.aspect = rect.width / Math.max(rect.height, 1);
+    camera.updateProjectionMatrix();
+  }
+  size();
+  window.addEventListener('resize', size);
+
+  const group = new THREE.Group();
+  scene.add(group);
+
+  /* core wireframe icosahedron */
+  const coreGeo = new THREE.IcosahedronGeometry(1.7, 1);
+  const coreMat = new THREE.MeshBasicMaterial({ color: 0x2dd4bf, wireframe: true, transparent: true, opacity: 0.55 });
+  const core = new THREE.Mesh(coreGeo, coreMat);
+  group.add(core);
+
+  /* inner solid glow shell */
+  const glowGeo = new THREE.IcosahedronGeometry(1.68, 1);
+  const glowMat = new THREE.MeshBasicMaterial({ color: 0xe879f9, transparent: true, opacity: 0.05 });
+  group.add(new THREE.Mesh(glowGeo, glowMat));
+
+  /* orbiting node points at the icosahedron vertices */
+  const nodesGeo = new THREE.BufferGeometry();
+  nodesGeo.setAttribute('position', coreGeo.getAttribute('position').clone());
+  const nodesMat = new THREE.PointsMaterial({ color: 0xfbbf24, size: 0.065, transparent: true, opacity: 0.9 });
+  group.add(new THREE.Points(nodesGeo, nodesMat));
+
+  /* scattered ambient particles filling the space */
+  const particleCount = 90;
+  const particlePos = new Float32Array(particleCount * 3);
+  for(let i = 0; i < particleCount; i++){
+    const r = 2.6 + Math.random() * 1.6;
+    const theta = Math.random() * Math.PI * 2;
+    const phi = Math.acos((Math.random() * 2) - 1);
+    particlePos[i*3]   = r * Math.sin(phi) * Math.cos(theta);
+    particlePos[i*3+1] = r * Math.sin(phi) * Math.sin(theta);
+    particlePos[i*3+2] = r * Math.cos(phi);
+  }
+  const particleGeo = new THREE.BufferGeometry();
+  particleGeo.setAttribute('position', new THREE.BufferAttribute(particlePos, 3));
+  const particleMat = new THREE.PointsMaterial({ color: 0x2dd4bf, size: 0.028, transparent: true, opacity: 0.5 });
+  const particles = new THREE.Points(particleGeo, particleMat);
+  scene.add(particles);
+
+  let raf = null;
+  const clock = new THREE.Clock();
+
+  function render(){
+    const t = clock.getElapsedTime();
+    group.rotation.y = t * 0.28;
+    group.rotation.x = Math.sin(t * 0.22) * 0.35;
+    particles.rotation.y = -t * 0.05;
+    renderer.render(scene, camera);
+  }
+
+  if(prefersReduced){
+    render();
+    return;
+  }
+
+  function loop(){
+    render();
+    raf = requestAnimationFrame(loop);
+  }
+  loop();
+
+  const io = new IntersectionObserver((entries)=>{
+    entries.forEach(entry=>{
+      if(entry.isIntersecting){
+        if(!raf) loop();
+      } else if(raf){
+        cancelAnimationFrame(raf);
+        raf = null;
+      }
+    });
+  }, { threshold: 0.05 });
+  io.observe(parent);
+}
+initHero3D(document.getElementById('hero3d'));
 
 const bgCanvas = document.getElementById('bgCanvas');
 if(bgCanvas){
